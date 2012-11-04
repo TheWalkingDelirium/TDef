@@ -24,7 +24,7 @@ public class menu_Scene extends CameraScene {
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
 
 				if (pSceneTouchEvent.isActionUp()) {
-					// What you want
+					mainState.ShowGameScene();
 				}
 				return true;
 			}
