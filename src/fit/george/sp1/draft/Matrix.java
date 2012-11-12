@@ -1,39 +1,118 @@
 package fit.george.sp1.draft;
 
+import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.LoopEntityModifier;
+import org.andengine.entity.modifier.PathModifier;
+import org.andengine.entity.modifier.PathModifier.IPathModifierListener;
+import org.andengine.entity.modifier.PathModifier.Path;
 import android.util.Log;
 
-public class Matrix implements Constants {
-	
+public class Matrix implements Constants{
 	
 	private final static int MATRIX_W = 10;
 	private final static int MATRIX_H = 15;
-	// 1 поле - 40px na 40px;
-	
 	
 	private static int[][] matrix;
 	
+	public Matrix() {
+		
+		matrix = new int[MATRIX_W][MATRIX_H];
+		this.init();
+		this.roadInit();
 	
+		final Path creepLevel1Path = new Path(7).to(130, 0).to(130, 340).to(370, 340).to(370, 100).to(490, 100).to(490, 280).to(620, 280);
+		
+		CreepLevel1.instance.registerEntityModifier(new LoopEntityModifier(new PathModifier(30, creepLevel1Path, null, new IPathModifierListener() {
+			public void onPathStarted(final PathModifier pPathModifier, final IEntity pEntity) {
+
+			}
+
+			public void onPathWaypointStarted(final PathModifier pPathModifier, final IEntity pEntity, final int pWaypointIndex) {
+				switch(pWaypointIndex) {
+					case 0:
+						CreepLevel1.instance.animate(new long[]{200, 200, 200}, 6, 8, true);
+						break;
+					case 1:
+						CreepLevel1.instance.animate(new long[]{200, 200, 200}, 3, 5, true);
+						break;
+					case 2:
+						CreepLevel1.instance.animate(new long[]{200, 200, 200}, 0, 2, true);
+						break;
+					case 3:
+						CreepLevel1.instance.animate(new long[]{200, 200, 200}, 3, 5, true);
+						break;
+					case 4:
+						CreepLevel1.instance.animate(new long[]{200, 200, 200}, 6, 8, true);
+						break;
+					case 5:
+						CreepLevel1.instance.animate(new long[]{200, 200, 200}, 3, 5, true);
+						break;
+				}
+			}
+
+			public void onPathWaypointFinished(final PathModifier pPathModifier, final IEntity pEntity, final int pWaypointIndex) {
+			}
+
+			
+			public void onPathFinished(final PathModifier pPathModifier, final IEntity pEntity) {
+				CreepLevel1.instance.setPosition(130, 0);
+				}
+		})));
+		
+		
+		
+		
+		final Path creepLevel2Path = new Path(7).to(130, 0).to(130, 340).to(370, 340).to(370, 100).to(490, 100).to(490, 280).to(620, 280);
+		
+		CreepLevel2.instance.registerEntityModifier(new LoopEntityModifier(new PathModifier(10, creepLevel2Path, null, new IPathModifierListener() {
+			public void onPathStarted(final PathModifier pPathModifier, final IEntity pEntity) {
+
+			}
+
+			public void onPathWaypointStarted(final PathModifier pPathModifier, final IEntity pEntity, final int pWaypointIndex) {
+				switch(pWaypointIndex) {
+					case 0:
+						CreepLevel2.instance.animate(new long[]{200, 200, 200}, 6, 8, true);
+						break;
+					case 1:
+						CreepLevel2.instance.animate(new long[]{200, 200, 200}, 3, 5, true);
+						break;
+					case 2:
+						CreepLevel2.instance.animate(new long[]{200, 200, 200}, 0, 2, true);
+						break;
+					case 3:
+						CreepLevel2.instance.animate(new long[]{200, 200, 200}, 3, 5, true);
+						break;
+					case 4:
+						CreepLevel2.instance.animate(new long[]{200, 200, 200}, 6, 8, true);
+						break;
+					case 5:
+						CreepLevel2.instance.animate(new long[]{200, 200, 200}, 3, 5, true);
+						break;
+				}
+			}
+
+			public void onPathWaypointFinished(final PathModifier pPathModifier, final IEntity pEntity, final int pWaypointIndex) {
+			}
+
+			
+			public void onPathFinished(final PathModifier pPathModifier, final IEntity pEntity) {
+				CreepLevel2.instance.setPosition(130, 0);
+				}
+		})));
+		
+		
+	}
 	
-	public int GetValue(int i, int j) {
+	public int getValue(int i, int j) {
 		return matrix[i][j];
 	}
 	
-	public void SetValue(int i, int j, int value) {
+	public void setValue(int i, int j, int value) {
 		matrix[i][j] = value;
 	}
 	
-	
-	
-	
-	public int [][] GetMatrix()
-	{
-		return matrix;
-	}
-	
-	
-	
-	private void Init()
-	{
+	private void init()	{
 		
 		for(int i = 1; i < MATRIX_W; i++)
 			for(int j = 1; j < MATRIX_H; j++)
@@ -54,16 +133,10 @@ public class Matrix implements Constants {
 		
 	}
 	
-	
-	
-	
-	private void RoadInit()
-	{
+	private void roadInit()	{
 		
-		matrix[1][3] = NPC_GENERATOR; //исходная точка крипов
-				
+		matrix[1][3] = NPC_GENERATOR; 				
 		
-		//строим дорогу
 		for(int i = 2; i < 8; i++)
 			matrix[i][3] = ROAD;
 		
@@ -96,13 +169,9 @@ public class Matrix implements Constants {
 		matrix[5][12] = LANDSCAPE_TREE_2;
 		matrix[6][12] = CASTLE;
 		
-		
 	}
 	
-	
-	
-	public void print()
-	{
+	public void print()	{
 		
 		String str = "";
 		
@@ -114,26 +183,10 @@ public class Matrix implements Constants {
 		}
 		
 		Log.d("Matrix", str);
-		
-		
+
 	}
 	
-	
-	
-	
-	public Matrix() {
-		
-		matrix = new int[MATRIX_W][MATRIX_H];
-		this.Init();
-		this.RoadInit();
-		
-	}
-	
-	
-	
-	
-	
-	public int GetCountOfRoad() {
+	public int getCountOfRoad() {
 		int count = 0;
 		for ( int i = 0; i < MATRIX_W; i++)
 			for ( int j = 0; j < MATRIX_H; j++)
@@ -142,7 +195,7 @@ public class Matrix implements Constants {
 		return count;
 	}
 	
-	public int GetCountOfTree1() {
+	public int getCountOfTree1() {
 		int count = 0;
 		for ( int i = 0; i < MATRIX_W; i++)
 			for ( int j = 0; j < MATRIX_H; j++)
@@ -151,7 +204,7 @@ public class Matrix implements Constants {
 		return count;
 	}
 	
-	public int GetCountOfTree2() {
+	public int getCountOfTree2() {
 		int count = 0;
 		for ( int i = 0; i < MATRIX_W; i++)
 			for ( int j = 0; j < MATRIX_H; j++)
@@ -160,7 +213,7 @@ public class Matrix implements Constants {
 		return count;
 	}
 	
-	public int GetCountOfTree3() {
+	public int getCountOfTree3() {
 		int count = 0;
 		for ( int i = 0; i < MATRIX_W; i++)
 			for ( int j = 0; j < MATRIX_H; j++)
@@ -168,6 +221,5 @@ public class Matrix implements Constants {
 		
 		return count;
 	}
-	
 
 }

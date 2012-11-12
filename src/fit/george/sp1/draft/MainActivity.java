@@ -9,7 +9,6 @@ import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
-//import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
@@ -31,16 +30,9 @@ import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.TextureRegionFactory;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.util.GLState;
-import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.BaseGameActivity;
 import org.andengine.util.adt.io.in.IInputStreamOpener;
 import org.andengine.util.debug.Debug;
-
-
-
-
-
-
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.KeyEvent;
@@ -53,16 +45,16 @@ public class MainActivity extends BaseGameActivity
 	private BuildableBitmapTextureAtlas mBitmapTextureAtlas;
 	public RepeatingSpriteBackground mGrassBackground;
 	public TiledTextureRegion dragon;
+	public TiledTextureRegion npc;
+	
+	public TiledTextureRegion creepLevel1Texture;
+	public TiledTextureRegion creepLevel2Texture;
 	
 	public ITexture mTextureRoad, mTextureCastle, mTextureTree1, mTextureTree2, mTextureTree3, mTextureGen ;
 	public ITextureRegion mTextureRegionRoad, mTextureRegionCastle, mTextureRegionTree1, mTextureRegionTree3, mTextureRegionTree2, mTextureRegionGen ;
 	
-	
-	
-	////////////////////////////////////////////////////
 	final static int CAMERA_WIDTH = 800;
 	final static int CAMERA_HEIGHT = 480;
-//	final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
 	public static Camera camera;
 	private Scene splashScene;
 	public  mainState _MainState;
@@ -85,8 +77,6 @@ public class MainActivity extends BaseGameActivity
 	public EngineOptions onCreateEngineOptions() // creating standard engine options
 	{
 		instance = this;
-		
-		////////////////////
 		camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), camera);
 		return engineOptions;
@@ -109,6 +99,8 @@ public class MainActivity extends BaseGameActivity
 		
 		
 		this.dragon = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "dragon.png", 2, 2);
+		this.creepLevel1Texture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "creepLevel1.png", 3, 4);
+		this.creepLevel2Texture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "creepLevel2.png", 3, 4);
 		
 		try {
 			this.mBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 1));
@@ -119,14 +111,6 @@ public class MainActivity extends BaseGameActivity
 		
 		loadTextures();
 		
-		
-		
-		
-		
-		
-		
-		
-		/////////////////////////////////////////////
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 		FontFactory.setAssetBasePath("fonts/");
         splashTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 512, 512, TextureOptions.BILINEAR);
@@ -154,8 +138,7 @@ public class MainActivity extends BaseGameActivity
                 loadResources();
                 loadScenes();         
                 splash.detachSelf();
-                mEngine.setScene(_MainState); // starting the game --> mainState.java
-                //currentScene = SceneType.MENU;
+                mEngine.setScene(_MainState); 
             }
 		}));
   
@@ -164,8 +147,7 @@ public class MainActivity extends BaseGameActivity
 	
 	public void loadResources() 
 	{
-		// Load your game resources here!
-		
+	
 		menuTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 512, TextureOptions.BILINEAR);
         menu_logoTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(splashTextureAtlas, this, "logo_tower.png", 0, 0);
         menu_aboutTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(splashTextureAtlas, this, "creep.png", 201, 0);
@@ -174,10 +156,7 @@ public class MainActivity extends BaseGameActivity
         tower = new Sprite(0, 0, MainActivity.menu_logoTextureRegion, this.getVertexBufferObjectManager());
         creep = new Sprite(0, 0, MainActivity.menu_aboutTextureRegion, this.getVertexBufferObjectManager());
     	
-        //tower.setScale(1.5f);
-    	//tower.setPosition((MainActivity.CAMERA_WIDTH - tower.getWidth()), (MainActivity.CAMERA_HEIGHT - tower.getHeight()));
-    	
-        //Загружаю шрифт Ubuntu размером 22 и 48 пикселей
+     
 		final ITexture ubuntuFontTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
 		final ITexture ubuntuLFontTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
 		FontFactory.setAssetBasePath("fonts/");
@@ -200,9 +179,6 @@ public class MainActivity extends BaseGameActivity
 	
 	private void initSplashScene()
 	{
-//		
-//		final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
-    	
 		splashScene = new Scene();
     	splashScene.setBackground(new Background(25/255f, 25/255f, 25/255f));
     	splash = new Sprite(0, 0, splashTextureRegion, this.getVertexBufferObjectManager())
@@ -215,11 +191,10 @@ public class MainActivity extends BaseGameActivity
             }
     	};
     	
-    	//splash.setScale(1.5f);
+    	
     	splash.setPosition((CAMERA_WIDTH - splash.getWidth()) * 0.5f, (CAMERA_HEIGHT - splash.getHeight()) * 0.5f);
     	splashScene.attachChild(splash);
-    	//splashScene.attachChild(new Text((CAMERA_WIDTH - splash.getWidth()) * 0.5f, (CAMERA_HEIGHT - splash.getHeight()) * 0.5f, this.mUbuntuFont, "Droid Font", vertexBufferObjectManager));
-        //splashScene.attachChild(new Text((CAMERA_WIDTH - splash.getWidth()) * 0.5f, (CAMERA_HEIGHT - splash.getHeight()) * 0.5f, MainActivity.mUbuntuFont, "Ubuntu Font", vertexBufferObjectManager));
+    	
 	}
 	
 	@Override
@@ -299,8 +274,4 @@ public class MainActivity extends BaseGameActivity
 		}
 	}
 	
-	
-	
-
-
 }

@@ -1,7 +1,6 @@
 package fit.george.sp1.draft;
 
 public interface Constants {
-
 	
 	public final static int EMPTY = 0;
 	public final static int ROAD = 1;
@@ -16,8 +15,5 @@ public interface Constants {
 	public final static int LANDSCAPE_TREE_3 = 63;
 	
 	public final static int FIELD_END = 7;
-	
-	
-	
 	
 }
