@@ -49,12 +49,17 @@ public class MainActivity extends BaseGameActivity
 {
 	public static MainActivity instance;
 	public Font mFont;
+	public static Font mFont_Game;
 	
 	private BuildableBitmapTextureAtlas mBitmapTextureAtlas;
 	public RepeatingSpriteBackground mGrassBackground;
 	public TiledTextureRegion dragon;
+	public TiledTextureRegion octopus;
+	public TiledTextureRegion npc;
 	
 	public ITexture mTextureRoad, mTextureCastle, mTextureTree1, mTextureTree2, mTextureTree3, mTextureGen ;
+	public ITexture mTextureCool, mTextureWhy, mTexturePoker, mTextureTroll, mTextureBoss ;
+	public ITextureRegion mTextureRegionCool, mTextureRegionWhy, mTextureRegionPoker, mTextureRegionTroll, mTextureRegionBoss;
 	public ITextureRegion mTextureRegionRoad, mTextureRegionCastle, mTextureRegionTree1, mTextureRegionTree3, mTextureRegionTree2, mTextureRegionGen ;
 	
 	
@@ -79,6 +84,9 @@ public class MainActivity extends BaseGameActivity
     private Sprite splash;
     public static Sprite tower;
     public static Sprite creep;
+    
+    public TiledTextureRegion creepLevel1Texture;
+	public TiledTextureRegion creepLevel2Texture;
 
 	
 	@Override
@@ -109,6 +117,10 @@ public class MainActivity extends BaseGameActivity
 		
 		
 		this.dragon = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "dragon.png", 2, 2);
+		this.octopus = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "all.png", 2, 2);
+		this.npc    = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "player.png", 3, 4);
+		this.creepLevel1Texture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "creepLevel1.png", 3, 4);
+		this.creepLevel2Texture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "creepLevel2.png", 3, 4);
 		
 		try {
 			this.mBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 1));
@@ -184,7 +196,11 @@ public class MainActivity extends BaseGameActivity
 		MainActivity.mUbuntuFont = FontFactory.createFromAsset(this.getFontManager(), ubuntuFontTexture, this.getAssets(), "Ubuntu-R.ttf", 22, true, Color.WHITE);
 		MainActivity.mUbuntuFont.load();
 		MainActivity.mUbuntuLFont = FontFactory.createFromAsset(this.getFontManager(), ubuntuLFontTexture, this.getAssets(), "Ubuntu-B.ttf", 48, true, Color.WHITE);
-		MainActivity.mUbuntuLFont.load();		
+		MainActivity.mUbuntuLFont.load();
+		
+		
+		mFont_Game = FontFactory.createFromAsset(this.getFontManager(), this.getTextureManager(), 512, 512, TextureOptions.BILINEAR, this.getAssets(), "Plok.ttf", 60, true, Color.WHITE);
+		mFont_Game.load();	
 		}
 	
 	private mainState loadScenes()
@@ -279,6 +295,36 @@ public class MainActivity extends BaseGameActivity
 					return getAssets().open("gfx/creep_gen.png");
 				}
 			});
+			this.mTexturePoker = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+				@Override
+				public InputStream open() throws IOException {
+					return getAssets().open("gfx/poker.png");
+				}
+			});
+			this.mTextureBoss = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+				@Override
+				public InputStream open() throws IOException {
+					return getAssets().open("gfx/boss.png");
+				}
+			});
+			this.mTextureWhy = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+				@Override
+				public InputStream open() throws IOException {
+					return getAssets().open("gfx/why.png");
+				}
+			});
+			this.mTextureTroll = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+				@Override
+				public InputStream open() throws IOException {
+					return getAssets().open("gfx/troll.png");
+				}
+			});
+			this.mTextureCool = new BitmapTexture(this.getTextureManager(), new IInputStreamOpener() {
+				@Override
+				public InputStream open() throws IOException {
+					return getAssets().open("gfx/cool.png");
+				}
+			});
 
 			this.mTextureRoad.load();
 			this.mTextureCastle.load();
@@ -286,6 +332,11 @@ public class MainActivity extends BaseGameActivity
 			this.mTextureTree2.load();
 			this.mTextureTree3.load();
 			this.mTextureGen.load();
+			this.mTexturePoker.load();
+			this.mTextureWhy.load();
+			this.mTextureBoss.load();
+			this.mTextureCool.load();
+			this.mTextureTroll.load();
 			
 			this.mTextureRegionRoad = TextureRegionFactory.extractFromTexture(this.mTextureRoad);			
 			this.mTextureRegionCastle = TextureRegionFactory.extractFromTexture(this.mTextureCastle);
@@ -293,6 +344,11 @@ public class MainActivity extends BaseGameActivity
 			this.mTextureRegionTree2 = TextureRegionFactory.extractFromTexture(this.mTextureTree2);
 			this.mTextureRegionTree3 = TextureRegionFactory.extractFromTexture(this.mTextureTree3);
 			this.mTextureRegionGen = TextureRegionFactory.extractFromTexture(this.mTextureGen);
+			this.mTextureRegionPoker = TextureRegionFactory.extractFromTexture(this.mTexturePoker);
+			this.mTextureRegionWhy = TextureRegionFactory.extractFromTexture(this.mTextureWhy);
+			this.mTextureRegionBoss = TextureRegionFactory.extractFromTexture(this.mTextureBoss);
+			this.mTextureRegionCool = TextureRegionFactory.extractFromTexture(this.mTextureCool);
+			this.mTextureRegionTroll = TextureRegionFactory.extractFromTexture(this.mTextureTroll);
 			
 		} catch (IOException e) {
 			Debug.e(e);
