@@ -16,7 +16,7 @@ public class menu_Scene extends CameraScene {
 		Text _text_name = new Text(350, 15, MainActivity.mUbuntuLFont, // переопределение какой-то функции, чтобы включить обработку нажатий
 				"    Tower\nDefence\n      v0.01", null);
 		
-		Text _text_start = new Text(100, 250, MainActivity.mUbuntuLFont,
+		Text _text_start = new Text(100, 125, MainActivity.mUbuntuLFont,
 				"Start", null)
 		{
 			@Override
@@ -30,7 +30,7 @@ public class menu_Scene extends CameraScene {
 			}
 		};
 
-		Text _text_settings = new Text(100, 300, MainActivity.mUbuntuLFont,
+		Text _text_settings = new Text(100, 225, MainActivity.mUbuntuLFont,
 				"Settings", null) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
@@ -43,7 +43,7 @@ public class menu_Scene extends CameraScene {
 			}
 		};
 		
-		Text _text_about = new Text(100, 350, MainActivity.mUbuntuLFont,
+		Text _text_about = new Text(100, 325, MainActivity.mUbuntuLFont,
 				"About", null) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,

@@ -1,12 +1,20 @@
 
 package fit.george.sp1.draft;
 
+import org.andengine.engine.camera.BoundCamera;
+import org.andengine.engine.camera.hud.controls.AnalogOnScreenControl;
+import org.andengine.engine.camera.hud.controls.BaseOnScreenControl;
+import org.andengine.engine.camera.hud.controls.AnalogOnScreenControl.IAnalogOnScreenControlListener;
+import org.andengine.engine.handler.physics.PhysicsHandler;
 import org.andengine.entity.Entity;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.MoveModifier;
+import org.andengine.entity.modifier.ScaleModifier;
+import org.andengine.entity.modifier.SequenceEntityModifier;
 import org.andengine.entity.primitive.Line;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.CameraScene;
+import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
@@ -17,6 +25,7 @@ import org.andengine.util.color.Color;
 
 
 
+import android.opengl.GLES20;
 import android.util.Log;
 
 
@@ -26,7 +35,7 @@ import android.util.Log;
  *
  * 
  */
-public class game_Scene extends CameraScene {
+public class game_Scene extends Scene {
 	
 	
 	private Sprite [] road, tree1, tree2, tree3;
@@ -42,8 +51,6 @@ public class game_Scene extends CameraScene {
 	private Text mGameOverText;
 	private Text mWinText;
 	private boolean isRunning;
-	private Entity bogus;
-	private boolean moved;
 	
 	/**
 	 * Method detects on scene touch event.
@@ -71,32 +78,6 @@ public class game_Scene extends CameraScene {
 			
 			
 	    }
-		
-		if(pSceneTouchEvent.isActionMove()){
-			moved = true;
-		}
-		
-		if (pSceneTouchEvent.isActionUp()) {
-	        if(moved){
-			y = pSceneTouchEvent.getY(); 
-			x = pSceneTouchEvent.getX(); 
-			
-			final MoveModifier modifier = new MoveModifier(1, bogus.getX(), x, bogus.getY(), y)
-			{
-			    @Override
-			    protected void onModifierFinished(IEntity pItem)
-			    {
-			        super.onModifierFinished(pItem);
-//			        MainActivity.mBoundChaseCamera.setChaseEntity(null);
-			    }
-			};             
-			bogus.registerEntityModifier(modifier);
-	        }
-	    }
-		
-
-		
-	
 		return super.onSceneTouchEvent(pSceneTouchEvent);
 	}
 
@@ -109,17 +90,13 @@ public class game_Scene extends CameraScene {
 	 */
 	public game_Scene()  {
 		
-		super(MainActivity.mBoundChaseCamera);
+		//super();
 		
+		MainActivity.bogus = new Entity();
+		MainActivity.bogus.setPosition(MainActivity.CAMERA_WIDTH/2, MainActivity.CAMERA_HEIGHT/2);
+		//MainActivity.bogus = new Sprite(MainActivity.CAMERA_WIDTH/2 , MainActivity.CAMERA_HEIGHT/2 ,  MainActivity.instance.mTextureRegionTree1, MainActivity.instance.getVertexBufferObjectManager());
 		game_instance = this;
 		isRunning = true;
-		
-		bogus = new Entity();
-		bogus.setPosition(MainActivity.CAMERA_WIDTH/2, MainActivity.CAMERA_HEIGHT/2);
-		bogus = new Sprite(MainActivity.CAMERA_WIDTH/2 , MainActivity.CAMERA_HEIGHT/2 , MainActivity.instance.mTextureRegionTree1, MainActivity.instance.getVertexBufferObjectManager());
-		
-		MainActivity.mBoundChaseCamera.setChaseEntity(bogus);
-		
 		
 		setBackground(MainActivity.instance.mGrassBackground);
 		
@@ -131,16 +108,16 @@ public class game_Scene extends CameraScene {
 		
 		final Line [] line_vert = new Line[15];
 		final Line [] line_horiz = new Line[10];
-		
-		final Rectangle ground = new Rectangle(0, MainActivity.CAMERA_HEIGHT*2 - 2, MainActivity.CAMERA_WIDTH, 2, MainActivity.instance.getVertexBufferObjectManager());
-		final Rectangle roof = new Rectangle(0, 0, MainActivity.CAMERA_WIDTH, 2, MainActivity.instance.getVertexBufferObjectManager());
+		// adding the lines that match the bounds of the camera. Width==2. Color - white. Gameworld is 4-times bigger than camera. 
+		final Rectangle ground = new Rectangle(0, MainActivity.CAMERA_HEIGHT*2-2, MainActivity.CAMERA_WIDTH*2, 2, MainActivity.instance.getVertexBufferObjectManager());
+		final Rectangle roof = new Rectangle(0, 0, MainActivity.CAMERA_WIDTH*2, 2, MainActivity.instance.getVertexBufferObjectManager());
 		final Rectangle left = new Rectangle(0, 0, 2, MainActivity.CAMERA_HEIGHT*2, MainActivity.instance.getVertexBufferObjectManager());
-		final Rectangle right = new Rectangle(MainActivity.CAMERA_WIDTH - 2, 0, 2, MainActivity.CAMERA_HEIGHT*2, MainActivity.instance.getVertexBufferObjectManager());
+		final Rectangle right = new Rectangle(MainActivity.CAMERA_WIDTH*2-2, 0, 2, MainActivity.CAMERA_HEIGHT*2, MainActivity.instance.getVertexBufferObjectManager());
 		attachChild(ground);
 		attachChild(roof);
 		attachChild(left);
 		attachChild(right);
-		
+		// adding the grid
 		for(int i = 1; i <= 13; i++) {
 			line_vert[i-1] = new Line(i * 60, 0, i * 60, 480, 1, MainActivity.instance.getVertexBufferObjectManager());
 			line_vert[i-1].setColor(Color.WHITE);
@@ -153,6 +130,33 @@ public class game_Scene extends CameraScene {
 			attachChild(line_horiz[i-1]);
 		}
 		
+		// initializing analog_control for moving Bogus entity. Camera chases bogus entity. 
+		final PhysicsHandler physicsHandler = new PhysicsHandler(MainActivity.instance.bogus);
+		MainActivity.instance.bogus.registerUpdateHandler(physicsHandler);
+		
+		final AnalogOnScreenControl analogOnScreenControl = new AnalogOnScreenControl(MainActivity.CAMERA_WIDTH - MainActivity.mOnScreenControlBaseTextureRegion.getWidth()-100, MainActivity.CAMERA_HEIGHT - MainActivity.mOnScreenControlBaseTextureRegion.getHeight(), 
+				MainActivity.mBoundChaseCamera, MainActivity.mOnScreenControlBaseTextureRegion, MainActivity.mOnScreenControlKnobTextureRegion, 0.1f, 200, MainActivity.instance.getVertexBufferObjectManager(), new IAnalogOnScreenControlListener() {
+			@Override
+			public void onControlChange(final BaseOnScreenControl pBaseOnScreenControl, final float pValueX, final float pValueY) {
+				physicsHandler.setVelocity(pValueX * 200, pValueY * 200);
+			}
+
+			@Override
+			public void onControlClick(final AnalogOnScreenControl pAnalogOnScreenControl) {
+				MainActivity.instance.bogus.registerEntityModifier(new SequenceEntityModifier(new ScaleModifier(0.25f, 1, 1.5f), new ScaleModifier(0.25f, 1.5f, 1)));
+			}
+		});
+		analogOnScreenControl.getControlBase().setBlendFunction(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+		analogOnScreenControl.getControlBase().setAlpha(0.5f);
+		analogOnScreenControl.getControlBase().setScaleCenter(0, 128);
+		analogOnScreenControl.getControlBase().setScale(1.75f);
+		analogOnScreenControl.getControlKnob().setScale(1.75f);
+		analogOnScreenControl.refreshControlKnobPosition();
+		
+		MainActivity.mBoundChaseCamera.setChaseEntity(MainActivity.instance.bogus);
+		attachChild(MainActivity.instance.bogus);
+		
+		setChildScene(analogOnScreenControl);
 	
 	}
 		
@@ -203,7 +207,7 @@ public class game_Scene extends CameraScene {
 						attachChild( tree3[count_tree3++]);
 					}
 				}
-			attachChild(bogus);
+		
 			
 	
 	}

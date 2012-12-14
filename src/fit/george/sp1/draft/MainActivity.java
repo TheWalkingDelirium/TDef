@@ -12,6 +12,7 @@ import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 //import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
+import org.andengine.entity.Entity;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.RepeatingSpriteBackground;
@@ -63,6 +64,9 @@ public class MainActivity extends BaseGameActivity
 	public ITextureRegion mTextureRegionCool, mTextureRegionWhy, mTextureRegionPoker, mTextureRegionTroll, mTextureRegionBoss;
 	public ITextureRegion mTextureRegionRoad, mTextureRegionCastle, mTextureRegionTree1, mTextureRegionTree3, mTextureRegionTree2, mTextureRegionGen ;
 	
+	public static BitmapTextureAtlas mOnScreenControlTexture;
+	public static ITextureRegion mOnScreenControlBaseTextureRegion;
+	public static ITextureRegion mOnScreenControlKnobTextureRegion;
 	
 	
 	////////////////////////////////////////////////////
@@ -85,6 +89,7 @@ public class MainActivity extends BaseGameActivity
     private Sprite splash;
     public static Sprite tower;
     public static Sprite creep;
+	public static Entity bogus;
     
     public TiledTextureRegion creepLevel1Texture;
 	public TiledTextureRegion creepLevel2Texture;
@@ -98,7 +103,7 @@ public class MainActivity extends BaseGameActivity
 		
 		////////////////////
 		//camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-		this.mBoundChaseCamera = new BoundCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, 0, CAMERA_HEIGHT*2, 0, CAMERA_WIDTH*2);
+		MainActivity.mBoundChaseCamera = new BoundCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, 0, CAMERA_WIDTH*2, 0, CAMERA_HEIGHT*2);
 		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mBoundChaseCamera);
 		return engineOptions;
 	}
@@ -113,7 +118,7 @@ public class MainActivity extends BaseGameActivity
 
 		this.mBitmapTextureAtlas = new BuildableBitmapTextureAtlas(this.getTextureManager(), 512, 256, TextureOptions.NEAREST);
 
-		this.mGrassBackground = new RepeatingSpriteBackground(800, 480, 
+		this.mGrassBackground = new RepeatingSpriteBackground(CAMERA_WIDTH*2, CAMERA_HEIGHT*2, 
 				this.getTextureManager(), AssetBitmapTextureAtlasSource.create(this.getAssets(), 
 				"gfx/background_grass.png"), this.getVertexBufferObjectManager());
 		
@@ -179,10 +184,15 @@ public class MainActivity extends BaseGameActivity
         tower = new Sprite(0, 0, MainActivity.menu_logoTextureRegion, this.getVertexBufferObjectManager());
         creep = new Sprite(0, 0, MainActivity.menu_aboutTextureRegion, this.getVertexBufferObjectManager());
     	
-        //tower.setScale(1.5f);
+        // Loading AnalogControl
+     		mOnScreenControlTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 128, TextureOptions.BILINEAR);
+     		mOnScreenControlBaseTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mOnScreenControlTexture, this, "onscreen_control_base.png", 0, 0);
+    		mOnScreenControlKnobTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mOnScreenControlTexture, this, "onscreen_control_knob.png", 128, 0);
+     		mOnScreenControlTexture.load();
+     	//tower.setScale(1.5f);
     	//tower.setPosition((MainActivity.CAMERA_WIDTH - tower.getWidth()), (MainActivity.CAMERA_HEIGHT - tower.getHeight()));
     	
-        //Загружаю шрифт Ubuntu размером 22 и 48 пикселей
+        //Loading UBUNTU font 22 and 48 px 
 		final ITexture ubuntuFontTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
 		final ITexture ubuntuLFontTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
 		FontFactory.setAssetBasePath("fonts/");
@@ -191,8 +201,7 @@ public class MainActivity extends BaseGameActivity
 		MainActivity.mUbuntuLFont = FontFactory.createFromAsset(this.getFontManager(), ubuntuLFontTexture, this.getAssets(), "Ubuntu-B.ttf", 48, true, Color.WHITE);
 		MainActivity.mUbuntuLFont.load();
 		
-		
-		mFont_Game = FontFactory.createFromAsset(this.getFontManager(), this.getTextureManager(), 512, 512, TextureOptions.BILINEAR, this.getAssets(), "Plok.ttf", 60, true, Color.WHITE);
+	    mFont_Game = FontFactory.createFromAsset(this.getFontManager(), this.getTextureManager(), 512, 512, TextureOptions.BILINEAR, this.getAssets(), "Plok.ttf", 60, true, Color.WHITE);
 		mFont_Game.load();	
 		}
 	
@@ -245,6 +254,8 @@ public class MainActivity extends BaseGameActivity
 		}
 	    return super.onKeyDown(keyCode, event);
 	}
+	
+
 	
 	
 	
