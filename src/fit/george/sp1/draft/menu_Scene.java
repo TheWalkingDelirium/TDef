@@ -10,7 +10,7 @@ public class menu_Scene extends CameraScene {
 	
 	public menu_Scene() {
 		
-		super(MainActivity.camera);
+		super(MainActivity.mBoundChaseCamera);
 		this.setBackground(new Background(255 / 255f, 255 / 255f, 255 / 255f));
 		
 		Text _text_name = new Text(350, 15, MainActivity.mUbuntuLFont, // переопределение какой-то функции, чтобы включить обработку нажатий

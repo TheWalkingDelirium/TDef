@@ -1,7 +1,11 @@
 
 package fit.george.sp1.draft;
 
+import org.andengine.entity.Entity;
+import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.MoveModifier;
 import org.andengine.entity.primitive.Line;
+import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.CameraScene;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
@@ -38,7 +42,8 @@ public class game_Scene extends CameraScene {
 	private Text mGameOverText;
 	private Text mWinText;
 	private boolean isRunning;
-	
+	private Entity bogus;
+	private boolean moved;
 	
 	/**
 	 * Method detects on scene touch event.
@@ -64,8 +69,33 @@ public class game_Scene extends CameraScene {
 				
 			}
 			
+			
 	    }
-	
+		
+		if(pSceneTouchEvent.isActionMove()){
+			moved = true;
+		}
+		
+		if (pSceneTouchEvent.isActionUp()) {
+	        if(moved){
+			y = pSceneTouchEvent.getY(); 
+			x = pSceneTouchEvent.getX(); 
+			
+			final MoveModifier modifier = new MoveModifier(1, bogus.getX(), x, bogus.getY(), y)
+			{
+			    @Override
+			    protected void onModifierFinished(IEntity pItem)
+			    {
+			        super.onModifierFinished(pItem);
+//			        MainActivity.mBoundChaseCamera.setChaseEntity(null);
+			    }
+			};             
+			bogus.registerEntityModifier(modifier);
+	        }
+	    }
+		
+
+		
 	
 		return super.onSceneTouchEvent(pSceneTouchEvent);
 	}
@@ -79,9 +109,17 @@ public class game_Scene extends CameraScene {
 	 */
 	public game_Scene()  {
 		
-		super(MainActivity.camera);
+		super(MainActivity.mBoundChaseCamera);
+		
 		game_instance = this;
 		isRunning = true;
+		
+		bogus = new Entity();
+		bogus.setPosition(MainActivity.CAMERA_WIDTH/2, MainActivity.CAMERA_HEIGHT/2);
+		bogus = new Sprite(MainActivity.CAMERA_WIDTH/2 , MainActivity.CAMERA_HEIGHT/2 , MainActivity.instance.mTextureRegionTree1, MainActivity.instance.getVertexBufferObjectManager());
+		
+		MainActivity.mBoundChaseCamera.setChaseEntity(bogus);
+		
 		
 		setBackground(MainActivity.instance.mGrassBackground);
 		
@@ -91,9 +129,17 @@ public class game_Scene extends CameraScene {
 		
 		this.loadMap();
 		
-		
 		final Line [] line_vert = new Line[15];
 		final Line [] line_horiz = new Line[10];
+		
+		final Rectangle ground = new Rectangle(0, MainActivity.CAMERA_HEIGHT*2 - 2, MainActivity.CAMERA_WIDTH, 2, MainActivity.instance.getVertexBufferObjectManager());
+		final Rectangle roof = new Rectangle(0, 0, MainActivity.CAMERA_WIDTH, 2, MainActivity.instance.getVertexBufferObjectManager());
+		final Rectangle left = new Rectangle(0, 0, 2, MainActivity.CAMERA_HEIGHT*2, MainActivity.instance.getVertexBufferObjectManager());
+		final Rectangle right = new Rectangle(MainActivity.CAMERA_WIDTH - 2, 0, 2, MainActivity.CAMERA_HEIGHT*2, MainActivity.instance.getVertexBufferObjectManager());
+		attachChild(ground);
+		attachChild(roof);
+		attachChild(left);
+		attachChild(right);
 		
 		for(int i = 1; i <= 13; i++) {
 			line_vert[i-1] = new Line(i * 60, 0, i * 60, 480, 1, MainActivity.instance.getVertexBufferObjectManager());
@@ -157,6 +203,7 @@ public class game_Scene extends CameraScene {
 						attachChild( tree3[count_tree3++]);
 					}
 				}
+			attachChild(bogus);
 			
 	
 	}

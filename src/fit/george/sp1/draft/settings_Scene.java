@@ -8,7 +8,7 @@ import org.andengine.util.color.Color;
 
 public class settings_Scene extends CameraScene {
 	public settings_Scene() {
-		super(MainActivity.camera);
+		super(MainActivity.mBoundChaseCamera);
 		this.setBackground(new Background(255/255f, 255/255f, 255/255f));
 	    Text _text_sound = new Text(100, 250, MainActivity.mUbuntuLFont, "Sound", null) {
 			@Override

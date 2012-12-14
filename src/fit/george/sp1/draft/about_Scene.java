@@ -6,7 +6,7 @@ import org.andengine.entity.text.Text;
 
 public class about_Scene extends CameraScene {
 	public about_Scene() {
-		super(MainActivity.camera);
+		super(MainActivity.mBoundChaseCamera);
 	    this.setBackground(new Background(255/255f, 255/255f, 255/255f));
 		
 		Text _text_rules = new Text(50, 40, MainActivity.mUbuntuFont, "This is easy game. The goal is to try to stop\ncreeps from crossing a map by\nbuilding towers which shoot at them as they pass.", null);

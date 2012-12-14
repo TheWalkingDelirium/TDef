@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.andengine.engine.Engine;
+import org.andengine.engine.camera.BoundCamera;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -68,7 +69,7 @@ public class MainActivity extends BaseGameActivity
 	final static int CAMERA_WIDTH = 800;
 	final static int CAMERA_HEIGHT = 480;
 //	final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
-	public static Camera camera;
+	public static BoundCamera mBoundChaseCamera;
 	private Scene splashScene;
 	public  mainState _MainState;
 	public static Font mUbuntuFont;
@@ -87,6 +88,7 @@ public class MainActivity extends BaseGameActivity
     
     public TiledTextureRegion creepLevel1Texture;
 	public TiledTextureRegion creepLevel2Texture;
+	private Object mFaceTextureRegion;
 
 	
 	@Override
@@ -95,8 +97,9 @@ public class MainActivity extends BaseGameActivity
 		instance = this;
 		
 		////////////////////
-		camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), camera);
+		//camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+		this.mBoundChaseCamera = new BoundCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, 0, CAMERA_HEIGHT*2, 0, CAMERA_WIDTH*2);
+		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mBoundChaseCamera);
 		return engineOptions;
 	}
 
@@ -105,23 +108,20 @@ public class MainActivity extends BaseGameActivity
 	{
 		this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32, Color.WHITE);
 		this.mFont.load();
-		
+		mBoundChaseCamera.setBoundsEnabled(true);
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 
 		this.mBitmapTextureAtlas = new BuildableBitmapTextureAtlas(this.getTextureManager(), 512, 256, TextureOptions.NEAREST);
 
-		
 		this.mGrassBackground = new RepeatingSpriteBackground(800, 480, 
 				this.getTextureManager(), AssetBitmapTextureAtlasSource.create(this.getAssets(), 
 				"gfx/background_grass.png"), this.getVertexBufferObjectManager());
-		
 		
 		this.dragon = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "dragon.png", 2, 2);
 		this.octopus = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "all.png", 2, 2);
 		this.npc    = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "player.png", 3, 4);
 		this.creepLevel1Texture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "creepLevel1.png", 3, 4);
 		this.creepLevel2Texture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "creepLevel2.png", 3, 4);
-		
 		try {
 			this.mBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 1));
 			this.mBitmapTextureAtlas.load();
@@ -129,14 +129,7 @@ public class MainActivity extends BaseGameActivity
 			Debug.e(e);
 		}
 		
-		loadTextures();
-		
-		
-		
-		
-		
-		
-		
+		loadTextures();	
 		
 		/////////////////////////////////////////////
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
