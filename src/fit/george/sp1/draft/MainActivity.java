@@ -69,9 +69,13 @@ public class MainActivity extends BaseGameActivity
 	public static ITextureRegion mOnScreenControlKnobTextureRegion;
 	
 	
+	
 	////////////////////////////////////////////////////
 	final static int CAMERA_WIDTH = 800;
 	final static int CAMERA_HEIGHT = 480;
+	final static int GAMEWORLD_WIDTH = CAMERA_WIDTH*2;
+	final static int GAMEWORLD_HEIGHT = CAMERA_HEIGHT*2;
+	
 //	final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
 	public static BoundCamera mBoundChaseCamera;
 	private Scene splashScene;
@@ -89,7 +93,6 @@ public class MainActivity extends BaseGameActivity
     private Sprite splash;
     public static Sprite tower;
     public static Sprite creep;
-	public static Entity bogus;
     
     public TiledTextureRegion creepLevel1Texture;
 	public TiledTextureRegion creepLevel2Texture;
