@@ -1,6 +1,20 @@
+
 package fit.george.sp1.draft;
 
+
+/**
+ * Interface <code>Constants</code> represents constants in the game.
+ * @author Radmir Usmanov
+ *
+ * 
+ */
 public interface Constants {
+
+	public final static int UP = 1000;
+	public final static int DOWN = 1001;
+	public final static int RIGHT = 1002;
+	public final static int LEFT = 1003;
+	
 	
 	public final static int EMPTY = 0;
 	public final static int ROAD = 1;

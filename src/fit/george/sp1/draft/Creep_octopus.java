@@ -1,7 +1,6 @@
 package fit.george.sp1.draft;
 
 import org.andengine.entity.IEntity;
-import org.andengine.entity.modifier.DelayModifier;
 import org.andengine.entity.modifier.LoopEntityModifier;
 import org.andengine.entity.modifier.PathModifier;
 import org.andengine.entity.modifier.PathModifier.IPathModifierListener;
@@ -9,13 +8,16 @@ import org.andengine.entity.modifier.PathModifier.Path;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
-/**
- * Class <code>CreepLevel1</code> represents the easiest creeps in the game.
- * @author Iluha
- */
-public class CreepLevel1 extends SimpleCreep{
 
-	
+/**
+ * Class <code>Creep_octopus</code> extends by class <code>SimpleCreep</code>. 
+ * Represents the creep. 
+ * @author Trushin Artyom
+ *  
+ */
+
+public class Creep_octopus extends SimpleCreep{
+
 	/**
 	 * Constructor of the class. Creates new instance of the <code>SimpleCreep</code> class.
 	 * 
@@ -25,20 +27,17 @@ public class CreepLevel1 extends SimpleCreep{
 	 * @param pHeight - height of the animation in pixels
 	 * @param pPlayerTextureRegion
 	 * @param pVertexBufferObjectManager
-	 */
-	public CreepLevel1(float centerX, float centerY, float pWidth,
+	 */	
+	public Creep_octopus(float centerX, float centerY, float pWidth,
 			float pHeight, ITiledTextureRegion pPlayerTextureRegion,
 			VertexBufferObjectManager pVertexBufferObjectManager, int healthPoint, float duration) {
 		
 		super(centerX, centerY, pWidth, pHeight, pPlayerTextureRegion, pVertexBufferObjectManager);
 		this.setInitialHealthPoint(healthPoint);
-		
-		this.setInitialPrice(20);
 		this.pDuration = duration;
-
-		final Path path = Matrix.getPath(10, -10);
-	
+		this.setInitialPrice(40);
 		
+		final Path path = Matrix.getPath(10, -10);
 		this.registerEntityModifier(new LoopEntityModifier(new PathModifier(this.pDuration, path, null, new IPathModifierListener() {
 			
 			
@@ -88,8 +87,7 @@ public class CreepLevel1 extends SimpleCreep{
 		game_Scene.game_instance.attachChild(this.hpAnimator);
 		
 	}
-
-
 	
-
+	
+	
 }
