@@ -12,7 +12,6 @@ import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 //import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
-import org.andengine.entity.Entity;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.RepeatingSpriteBackground;
@@ -33,7 +32,7 @@ import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.TextureRegionFactory;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.util.GLState;
-import org.andengine.opengl.vbo.VertexBufferObjectManager;
+//import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.BaseGameActivity;
 import org.andengine.util.adt.io.in.IInputStreamOpener;
 import org.andengine.util.debug.Debug;
@@ -81,7 +80,8 @@ public class MainActivity extends BaseGameActivity
 	private Scene splashScene;
 	public  mainState _MainState;
 	public static Font mUbuntuFont;
-	public static Font mUbuntuLFont;
+	public static Font mHarringtonFont;
+	public static Font mHarringtonLFont;
 	private boolean _GameLoaded = false;
 	public static Engine _Engine;
 	
@@ -89,14 +89,14 @@ public class MainActivity extends BaseGameActivity
     private ITextureRegion splashTextureRegion;
     public BitmapTextureAtlas menuTextureAtlas;
     public static ITextureRegion menu_aboutTextureRegion;
-    public static ITextureRegion menu_logoTextureRegion;
+    public static ITextureRegion menu_TextureRegion;
     private Sprite splash;
-    public static Sprite tower;
+    public static Sprite menu_background;
     public static Sprite creep;
     
     public TiledTextureRegion creepLevel1Texture;
 	public TiledTextureRegion creepLevel2Texture;
-	private Object mFaceTextureRegion;
+	//private Object mFaceTextureRegion;
 
 	
 	@Override
@@ -106,7 +106,7 @@ public class MainActivity extends BaseGameActivity
 		
 		////////////////////
 		//camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-		MainActivity.mBoundChaseCamera = new BoundCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, 0, CAMERA_WIDTH*2, 0, CAMERA_HEIGHT*2);
+		MainActivity.mBoundChaseCamera = new BoundCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, 0, GAMEWORLD_WIDTH, 0, GAMEWORLD_HEIGHT);
 		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mBoundChaseCamera);
 		return engineOptions;
 	}
@@ -116,12 +116,14 @@ public class MainActivity extends BaseGameActivity
 	{
 		this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32, Color.WHITE);
 		this.mFont.load();
+		
 		mBoundChaseCamera.setBoundsEnabled(true);
+		
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 
 		this.mBitmapTextureAtlas = new BuildableBitmapTextureAtlas(this.getTextureManager(), 512, 256, TextureOptions.NEAREST);
 
-		this.mGrassBackground = new RepeatingSpriteBackground(CAMERA_WIDTH*2, CAMERA_HEIGHT*2, 
+		this.mGrassBackground = new RepeatingSpriteBackground(GAMEWORLD_WIDTH, GAMEWORLD_HEIGHT, 
 				this.getTextureManager(), AssetBitmapTextureAtlasSource.create(this.getAssets(), 
 				"gfx/background_grass.png"), this.getVertexBufferObjectManager());
 		
@@ -180,32 +182,34 @@ public class MainActivity extends BaseGameActivity
 		// Load your game resources here!
 		
 		menuTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 512, TextureOptions.BILINEAR);
-        menu_logoTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(splashTextureAtlas, this, "logo_tower.png", 0, 0);
-        menu_aboutTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(splashTextureAtlas, this, "creep.png", 201, 0);
+        menu_TextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, this, "menu_background.png", 0, 0);
+    //    menu_aboutTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, this, "logo.png", 201, 0);
         menuTextureAtlas.load();
         
-        tower = new Sprite(0, 0, MainActivity.menu_logoTextureRegion, this.getVertexBufferObjectManager());
-        creep = new Sprite(0, 0, MainActivity.menu_aboutTextureRegion, this.getVertexBufferObjectManager());
-    	
+        menu_background = new Sprite(0, 0, MainActivity.menu_TextureRegion, this.getVertexBufferObjectManager());
+    //    creep = new Sprite(0, 0, MainActivity.menu_aboutTextureRegion, this.getVertexBufferObjectManager());
+//=========================================    	
         // Loading AnalogControl
-     		mOnScreenControlTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 128, TextureOptions.BILINEAR);
-     		mOnScreenControlBaseTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mOnScreenControlTexture, this, "onscreen_control_base.png", 0, 0);
-    		mOnScreenControlKnobTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mOnScreenControlTexture, this, "onscreen_control_knob.png", 128, 0);
-     		mOnScreenControlTexture.load();
-     	//tower.setScale(1.5f);
-    	//tower.setPosition((MainActivity.CAMERA_WIDTH - tower.getWidth()), (MainActivity.CAMERA_HEIGHT - tower.getHeight()));
-    	
+     	mOnScreenControlTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 128, TextureOptions.BILINEAR);
+     	mOnScreenControlBaseTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mOnScreenControlTexture, this, "onscreen_control_base.png", 0, 0);
+    	mOnScreenControlKnobTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mOnScreenControlTexture, this, "onscreen_control_knob.png", 128, 0);
+     	mOnScreenControlTexture.load();
+//=========================================
         //Loading UBUNTU font 22 and 48 px 
 		final ITexture ubuntuFontTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
-		final ITexture ubuntuLFontTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
+		final ITexture harringtonLFontTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
+		final ITexture harringtonFontTexture = new BitmapTextureAtlas(this.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
+		
 		FontFactory.setAssetBasePath("fonts/");
 		MainActivity.mUbuntuFont = FontFactory.createFromAsset(this.getFontManager(), ubuntuFontTexture, this.getAssets(), "Ubuntu-R.ttf", 22, true, Color.WHITE);
 		MainActivity.mUbuntuFont.load();
-		MainActivity.mUbuntuLFont = FontFactory.createFromAsset(this.getFontManager(), ubuntuLFontTexture, this.getAssets(), "Ubuntu-B.ttf", 48, true, Color.WHITE);
-		MainActivity.mUbuntuLFont.load();
-		
-	    mFont_Game = FontFactory.createFromAsset(this.getFontManager(), this.getTextureManager(), 512, 512, TextureOptions.BILINEAR, this.getAssets(), "Plok.ttf", 60, true, Color.WHITE);
+		MainActivity.mHarringtonFont = FontFactory.createFromAsset(this.getFontManager(), harringtonFontTexture, this.getAssets(), "Harngton.ttf", 22, true, Color.WHITE);
+		MainActivity.mHarringtonFont.load();
+		MainActivity.mHarringtonLFont = FontFactory.createFromAsset(this.getFontManager(), harringtonLFontTexture, this.getAssets(), "Harngton.ttf", 48, true, Color.WHITE);
+		MainActivity.mHarringtonLFont.load();
+		mFont_Game = FontFactory.createFromAsset(this.getFontManager(), this.getTextureManager(), 512, 512, TextureOptions.BILINEAR, this.getAssets(), "Plok.ttf", 60, true, Color.WHITE);
 		mFont_Game.load();	
+//=========================================
 		}
 	
 	private mainState loadScenes()
@@ -221,9 +225,6 @@ public class MainActivity extends BaseGameActivity
 	
 	private void initSplashScene()
 	{
-//		
-//		final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
-    	
 		splashScene = new Scene();
     	splashScene.setBackground(new Background(25/255f, 25/255f, 25/255f));
     	splash = new Sprite(0, 0, splashTextureRegion, this.getVertexBufferObjectManager())
@@ -235,17 +236,12 @@ public class MainActivity extends BaseGameActivity
                 pGLState.enableDither();
             }
     	};
-    	
-    	//splash.setScale(1.5f);
     	splash.setPosition((CAMERA_WIDTH - splash.getWidth()) * 0.5f, (CAMERA_HEIGHT - splash.getHeight()) * 0.5f);
     	splashScene.attachChild(splash);
-    	//splashScene.attachChild(new Text((CAMERA_WIDTH - splash.getWidth()) * 0.5f, (CAMERA_HEIGHT - splash.getHeight()) * 0.5f, this.mUbuntuFont, "Droid Font", vertexBufferObjectManager));
-        //splashScene.attachChild(new Text((CAMERA_WIDTH - splash.getWidth()) * 0.5f, (CAMERA_HEIGHT - splash.getHeight()) * 0.5f, MainActivity.mUbuntuFont, "Ubuntu Font", vertexBufferObjectManager));
-	}
+    }
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) { // BACK_KEY_PRESS processing
-		
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
 			if (!_GameLoaded ) return true;
@@ -257,12 +253,6 @@ public class MainActivity extends BaseGameActivity
 		}
 	    return super.onKeyDown(keyCode, event);
 	}
-	
-
-	
-	
-	
-	
 	
 	private void loadTextures() {
 		try {

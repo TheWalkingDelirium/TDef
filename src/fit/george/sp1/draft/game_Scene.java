@@ -43,9 +43,8 @@ public class game_Scene extends Scene {
 	private boolean isRunning;
 	private Entity bogus; // fake entity for moving camera. Camera chases
 							// invisible fake entity.
-	private boolean make_grid = false;
-	private final Line[] line_vert = new Line[15];
-	private final Line[] line_horiz = new Line[10];
+	private final Line[] line_vert = new Line[30];
+	private final Line[] line_horiz = new Line[20];
 
 	/**
 	 * Method detects on scene touch event.
@@ -56,11 +55,16 @@ public class game_Scene extends Scene {
 	@Override
 	public boolean onSceneTouchEvent(TouchEvent pSceneTouchEvent) {
 
-		if (pSceneTouchEvent.isActionUp() && count < TOWERS_NUM) {
-
+		if (pSceneTouchEvent.isActionDown() && count < TOWERS_NUM) {
+			int matrix_v1, matrix_v2 = 0;
+			
 			y = pSceneTouchEvent.getY();
 			x = pSceneTouchEvent.getX();
-
+			
+			matrix_v1 = (int) (y / 60) + 1;
+			matrix_v2 = (int) (x / 60) + 1;
+			if(matrix_v1 > 10 || matrix_v2 > 12) return super.onSceneTouchEvent(pSceneTouchEvent);
+		
 			if (matrix.GetValue(((int) (y / 60)) + 1, ((int) (x / 60)) + 1) == 0
 					&& (money.GetMoney() - Tower.GetPrice()) >= 0) {
 
@@ -68,11 +72,10 @@ public class game_Scene extends Scene {
 						MainActivity.instance.dragon,
 						MainActivity.instance.getVertexBufferObjectManager());
 				attachChild(towers[count++]);
-
+				
 				money.DeductMoney(Tower.GetPrice());
 				matrix.SetValue(((int) (y / 60)) + 1, ((int) (x / 60)) + 1,
 						Matrix.TOWER);
-
 			}
 
 		}
@@ -88,13 +91,6 @@ public class game_Scene extends Scene {
 
 		// super();
 
-		bogus = new Entity();
-		bogus.setPosition(MainActivity.CAMERA_WIDTH / 2,
-				MainActivity.CAMERA_HEIGHT / 2);
-		bogus = new Sprite(MainActivity.CAMERA_WIDTH / 2,
-				MainActivity.CAMERA_HEIGHT / 2,
-				MainActivity.instance.mTextureRegionTree1,
-				MainActivity.instance.getVertexBufferObjectManager());
 		game_instance = this;
 		isRunning = true;
 
@@ -104,6 +100,15 @@ public class game_Scene extends Scene {
 		towers = new Tower[TOWERS_NUM];
 		money = new Money(950);
 
+
+		bogus = new Entity();
+	/*	bogus.setPosition(MainActivity.CAMERA_WIDTH / 3,
+				MainActivity.CAMERA_HEIGHT / 3);*/
+		bogus = new Sprite(MainActivity.CAMERA_WIDTH / 2,
+				MainActivity.CAMERA_HEIGHT / 2,
+				MainActivity.instance.mTextureRegionTree1,
+				MainActivity.instance.getVertexBufferObjectManager());
+		
 		this.loadMap();
 
 		// adding the lines that match the bounds of the camera. Width==2. Color
@@ -128,22 +133,23 @@ public class game_Scene extends Scene {
 		attachChild(right);
 		// adding the grid
 		
-			for (int i = 1; i <= 13; i++) {
+			for (int i = 1; i <= 26; i++) {
 				line_vert[i - 1] = new Line(i * 60, 0, i * 60,
-						MainActivity.CAMERA_HEIGHT, 1,
+						MainActivity.GAMEWORLD_HEIGHT, 1,
 						MainActivity.instance.getVertexBufferObjectManager());
 				line_vert[i - 1].setColor(Color.WHITE);
 				attachChild(line_vert[i - 1]);
 			}
 
-			for (int i = 1; i < 8; i++) {
+			for (int i = 1; i < 16; i++) {
 				line_horiz[i - 1] = new Line(0, i * 60,
-						MainActivity.CAMERA_WIDTH, i * 60, 1,
+						MainActivity.GAMEWORLD_WIDTH, i * 60, 1,
 						MainActivity.instance.getVertexBufferObjectManager());
 				line_horiz[i - 1].setColor(Color.WHITE);
 				attachChild(line_horiz[i - 1]);
 			}
 		
+//=======================================================================
 		// initializing analog_control for moving Bogus entity. Camera chases
 		// bogus entity.
 		final PhysicsHandler physicsHandler = new PhysicsHandler(bogus);
@@ -157,7 +163,7 @@ public class game_Scene extends Scene {
 						- MainActivity.mOnScreenControlBaseTextureRegion
 								.getHeight(), MainActivity.mBoundChaseCamera,
 				MainActivity.mOnScreenControlBaseTextureRegion,
-				MainActivity.mOnScreenControlKnobTextureRegion, 0.1f, 200,
+				MainActivity.mOnScreenControlKnobTextureRegion, 0.1f, 700,
 				MainActivity.instance.getVertexBufferObjectManager(),
 				new IAnalogOnScreenControlListener() {
 					@Override
@@ -171,9 +177,6 @@ public class game_Scene extends Scene {
 					@Override
 					public void onControlClick(
 							final AnalogOnScreenControl pAnalogOnScreenControl) {
-						bogus.registerEntityModifier(new SequenceEntityModifier(
-								new ScaleModifier(0.25f, 1, 1.5f),
-								new ScaleModifier(0.25f, 1.5f, 1)));
 					}
 				});
 		analogOnScreenControl.getControlBase().setBlendFunction(
@@ -185,10 +188,12 @@ public class game_Scene extends Scene {
 		analogOnScreenControl.refreshControlKnobPosition();
 
 		MainActivity.mBoundChaseCamera.setChaseEntity(bogus);
+		
 		attachChild(bogus);
 
 		setChildScene(analogOnScreenControl);
-
+//====================================================================================
+	
 	}
 
 	/**
@@ -275,7 +280,7 @@ public class game_Scene extends Scene {
 
 	public void onGameOver() {
 		isRunning = false;
-		this.mGameOverText = new Text(0, 0, MainActivity.mFont_Game,
+		this.mGameOverText = new Text(0, 0, MainActivity.mHarringtonLFont,
 				"Game Over", new TextOptions(HorizontalAlign.CENTER),
 				MainActivity.instance.getVertexBufferObjectManager());
 		this.mGameOverText
@@ -289,7 +294,7 @@ public class game_Scene extends Scene {
 
 	public void onWin() {
 		isRunning = false;
-		this.mWinText = new Text(0, 0, MainActivity.mFont_Game, "WIN!!!",
+		this.mWinText = new Text(0, 0, MainActivity.mHarringtonLFont, "Victory!",
 				new TextOptions(HorizontalAlign.CENTER),
 				MainActivity.instance.getVertexBufferObjectManager());
 		this.mWinText
@@ -300,26 +305,27 @@ public class game_Scene extends Scene {
 		setIgnoreUpdate(true);
 	}
 
+	/**
+	 * Switch grid visibility.
+	 * @param grid - is grid visible or not
+	 * 
+	 */
 	public void grid_switch(boolean grid) {
 		if (grid == false){
-			for (int i = 1; i <= 13; i++) {
+			for (int i = 1; i <= 26; i++) {
 					line_vert[i - 1].setVisible(false);
 				}
-			for (int i = 1; i < 8; i++) {
+			for (int i = 1; i < 16; i++) {
 					line_horiz[i - 1].setVisible(false);
 				}
-			
-			make_grid = true;
 		}
 		else{
-			for (int i = 1; i <= 13; i++) {
+			for (int i = 1; i <= 26; i++) {
 				line_vert[i - 1].setVisible(true);
 			}
-			for (int i = 1; i < 8; i++) {
+			for (int i = 1; i < 16; i++) {
 				line_horiz[i - 1].setVisible(true);
 			}
-			make_grid = false;
-			
 		}
 	}
 

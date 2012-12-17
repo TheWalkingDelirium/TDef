@@ -114,10 +114,6 @@ public class mainState extends Scene {
 	    	}
 	    }
 	    return false; 
-	}
-
-
-
-	
+	}	
 }
 

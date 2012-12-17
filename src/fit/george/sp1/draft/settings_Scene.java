@@ -12,15 +12,15 @@ public class settings_Scene extends CameraScene {
 	
 	public settings_Scene() {
 		super(MainActivity.mBoundChaseCamera);
-		this.setBackground(new Background(255/255f, 255/255f, 255/255f));
-	    Text _text_sound = new Text(100, 250, MainActivity.mUbuntuLFont, "Sound", MainActivity.instance.getVertexBufferObjectManager()) {
+		this.setBackground(new Background(241/255f, 228/255f, 209/255f));
+	    Text _text_sound = new Text(100, 200, MainActivity.mHarringtonLFont, "Sound", MainActivity.instance.getVertexBufferObjectManager()) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown()) {
 					//yoursound.setvolume(0.0f);
 					if(text_sound==false){ 
-						this.setColor(Color.GREEN);
+						this.setColor(211/255f, 215/255f, 207/255f);
 						text_sound = true;
 					}
 					else {
@@ -32,13 +32,13 @@ public class settings_Scene extends CameraScene {
 			}
 		};
 		 
-		Text _text_grid = new Text(100, 300, MainActivity.mUbuntuLFont, "Grid", MainActivity.instance.getVertexBufferObjectManager()) {
+		Text _text_grid = new Text(100, 260, MainActivity.mHarringtonLFont, "Grid", MainActivity.instance.getVertexBufferObjectManager()) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown()) {
 					if(text_grid==false){ 
-						this.setColor(Color.GREEN);
+						this.setColor(211/255f, 215/255f, 207/255f);
 						game_Scene.game_instance.grid_switch(false);
 						text_grid = true;
 						
