@@ -16,9 +16,6 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
  */
 public class CreepLevel2 extends SimpleCreep {
 
-	public static CreepLevel2 instance;
-	
-	
 	
 	/**
 	 * Constructor of the class. Creates new instance of the <code>SimpleCreep</code> class.
@@ -32,25 +29,24 @@ public class CreepLevel2 extends SimpleCreep {
 	 */
 	public CreepLevel2(float centerX, float centerY, float pWidth,
 			float pHeight, ITiledTextureRegion pPlayerTextureRegion,
-			VertexBufferObjectManager pVertexBufferObjectManager)  {
+			VertexBufferObjectManager pVertexBufferObjectManager, int healthPoint, float duration)  {
 		
 		super(centerX, centerY, pWidth, pHeight, pPlayerTextureRegion, pVertexBufferObjectManager);
-		this.setInitialHealthPoint(150);
+		this.setInitialHealthPoint(healthPoint);
 		
 		this.setInitialPrice(30);
-		
-		instance = this;
+		this.pDuration = duration;
+
 		
 		final Path path = Matrix.getPath(10, -10);
 		
-		this.registerEntityModifier(new LoopEntityModifier(new PathModifier(10, path, null, new IPathModifierListener() {
+		this.registerEntityModifier(new LoopEntityModifier(new PathModifier(this.pDuration, path, null, new IPathModifierListener() {
 			public void onPathStarted(final PathModifier pPathModifier, final IEntity pEntity) {
-
 			}
 
 			public void onPathWaypointStarted(final PathModifier pPathModifier, final IEntity pEntity, final int pWaypointIndex) {
 				if ( Matrix.getDirection(pWaypointIndex) == Constants.UP )  animate(new long[]{200, 200, 200}, 0, 2, true);
-				if ( Matrix.getDirection(pWaypointIndex) == Constants.RIGHT )  animate(new long[]{200, 200, 200}, 3, 5, true);
+				if ( Matrix.getDirection(pWaypointIndex) == Constants.RIGHT ) animate(new long[]{200, 200, 200}, 3, 5, true);
 				if ( Matrix.getDirection(pWaypointIndex) == Constants.DOWN )  animate(new long[]{200, 200, 200}, 6, 8, true);
 			}
 
@@ -65,7 +61,25 @@ public class CreepLevel2 extends SimpleCreep {
 				}
 		})));
 		
+		this.hpAnimator.registerEntityModifier(new LoopEntityModifier(new PathModifier(this.pDuration, path, null, new IPathModifierListener() {
+			public void onPathStarted(final PathModifier pPathModifier, final IEntity pEntity) {
+
+			}
+
+			public void onPathWaypointStarted(final PathModifier pPathModifier, final IEntity pEntity, final int pWaypointIndex) {
+			}
+
+			
+			public void onPathWaypointFinished(final PathModifier pPathModifier, final IEntity pEntity, final int pWaypointIndex) {
+			}
+
+			
+			public void onPathFinished(final PathModifier pPathModifier, final IEntity pEntity) {
+			}
+		})));
+		
 		game_Scene.game_instance.attachChild(this);
+		game_Scene.game_instance.attachChild(this.hpAnimator);
 		
 	}
 	

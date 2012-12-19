@@ -1,23 +1,31 @@
 package fit.george.sp1.draft;
 
+
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class TList {
 	
 	private List<SimpleCreep> list;
 	public static TList list_instance;
+
+	
 	
 	public TList() {
 		list = new ArrayList<SimpleCreep>();
-		this.list_instance = this;
+		TList.list_instance = this;
 	}
+	
+	
 	
 	public void add(SimpleCreep creep) {
 		synchronized(this) {
 			list.add(creep);
 		}
 	}
+	
+	
 	
 	public SimpleCreep remove(int i) {
 		SimpleCreep tmp;
@@ -27,6 +35,8 @@ public class TList {
 		return tmp;
 	}
 	
+	
+	
 	public int size() {
 		int s = -1;
 		synchronized(this) {
@@ -35,6 +45,8 @@ public class TList {
 		return s;
 	}
 	
+	
+	
 	public boolean isEmpty() {
 		boolean s = false;
 		synchronized(this) {
@@ -42,6 +54,8 @@ public class TList {
 		}
 		return s;
 	}
+	
+	
 	
 	public SimpleCreep get(int i) {
 		SimpleCreep tmp;
@@ -54,3 +68,4 @@ public class TList {
 	
 
 }
+

@@ -1,8 +1,13 @@
 package fit.george.sp1.draft;
 
+import org.andengine.engine.handler.IUpdateHandler;
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
+import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import org.andengine.util.color.Color;
 
 /**
  * @author Iluha
@@ -14,12 +19,12 @@ public class SimpleCreep extends AnimatedSprite{
 
 	private int healthPoint;
 	private boolean isAlive;
+	public Rectangle hpAnimator;
+	public float pDuration;
+	
+	private TimerHandler stun;
 	
 	private int price;
-	
-	
-//	public static SimpleCreep instance;
-	
 	
 	/**
 	 * Constructor of the class. Creates new instance of the <code>SimpleCreep</code> class.
@@ -37,8 +42,12 @@ public class SimpleCreep extends AnimatedSprite{
 		
 		super (centerX, centerY, pWidth, pHeight, pPlayerTextureRegion, pVertexBufferObjectManager);
 		this.isAlive = true;
-//		instance = this;
 		
+		this.hpAnimator = new Rectangle(centerX, centerY, 45, 10, pVertexBufferObjectManager);
+		this.hpAnimator.setZIndex(3);
+		this.hpAnimator.setColor(Color.RED);
+		this.hpAnimator.setVisible(false);
+
 	}
 	
 	
@@ -56,7 +65,8 @@ public class SimpleCreep extends AnimatedSprite{
 	protected void setInitialPrice(int price){
 		this.price = price;
 	}
-	
+
+
 	
 	/**
 	 * Decreases creep's heath points.
@@ -66,12 +76,18 @@ public class SimpleCreep extends AnimatedSprite{
 	
 	public void damageCreep(int damage){
 		this.healthPoint -= damage;
+		this.hpAnimator.setVisible(true);
 		
+		this.hpAnimator.setWidth((this.hpAnimator.getWidth()*this.healthPoint)/(this.healthPoint + damage));
 		if (this.healthPoint <= 0 ) {
 			Money.instance.AddMoney(price);
 			detach();			
 		}
-			
+	}
+	
+	public void stun(float stunTime){
+
+		
 	}
 	
 	
@@ -87,13 +103,13 @@ public class SimpleCreep extends AnimatedSprite{
 		return this.isAlive;
 	}
 	
-	
-	
 	public void detach() {
 		this.isAlive = false;
+		this.hpAnimator.setVisible(false);
+		this.hpAnimator.clearEntityModifiers();
 		this.clearEntityModifiers();		
 		this.setVisible(false);
-		//this.setIgnoreUpdate(true);
-		//this.clearUpdateHandlers();
 	}
+	
+	
 }

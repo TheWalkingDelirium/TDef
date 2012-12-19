@@ -15,10 +15,10 @@ public class about_Scene extends CameraScene {
 		_text_rules.setColor(15/255f, 15/255f, 15/255f); //Цвет текста
 		_text_credits.setColor(75/255f, 75/255f, 75/255f); //Цвет текста
 		
-//		MainActivity.creep.setScale(1.5f);
-//		MainActivity.creep.setPosition(20, 220);
+	//	MainActivity.logo.setScale(1.5f);
+		MainActivity.logo.setPosition(80, 225);
     	
-//		this.attachChild(MainActivity.creep);
+		this.attachChild(MainActivity.logo);
 		this.attachChild(_text_rules);
 		this.attachChild(_text_credits);
 	}

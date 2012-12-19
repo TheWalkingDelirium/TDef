@@ -11,9 +11,11 @@ import android.view.KeyEvent;
 public class mainState extends Scene {
 	
 	public static menu_Scene _Menu_Scene = new menu_Scene();
-	public static game_Scene _Game_Scene = new game_Scene();
+	public static game_Scene _Game_Scene;// = new game_Scene();
 	public static about_Scene _About_Scene = new about_Scene();
 	public static settings_Scene _Settings_Scene = new settings_Scene();
+	
+	public static mainState instance;
 
 	
 	public enum SceneType
@@ -28,11 +30,16 @@ public class mainState extends Scene {
 	private static SceneType currentScene = SceneType.MENU;
 	
 	public mainState() {
+		_Game_Scene = new game_Scene();
+		_Game_Scene.setOnAreaTouchTraversalFrontToBack();
+		//_Game_Scene.setTouchAreaBindingOnActionDownEnabled(true);
 		attachChild(_Menu_Scene);
 		attachChild(_Game_Scene);
 		attachChild(_About_Scene);
 		attachChild(_Settings_Scene);
 		ShowMainScene();
+		
+		instance = this;
 	}
 	
 	public static void ShowMainScene() {
@@ -41,6 +48,24 @@ public class mainState extends Scene {
 		_About_Scene.Hide();
 		_Settings_Scene.Hide();
 		currentScene = SceneType.MENU;;
+	}
+	
+	public static void newGame() {
+		_Game_Scene.detachChildren();
+		mainState.instance.detachChild(_Game_Scene);
+		_Game_Scene.dispose();
+		_Game_Scene = null;
+		_Game_Scene = new game_Scene();
+		_Game_Scene.setOnAreaTouchTraversalFrontToBack();
+		
+		mainState.instance.attachChild(_Game_Scene);
+		
+		
+		_Menu_Scene.Hide();
+		_Game_Scene.Show();
+		_About_Scene.Hide();
+		_Settings_Scene.Hide();
+		currentScene = SceneType.GAME;;
 	}
 	
 	public static void ShowSettingsScene() {
@@ -114,6 +139,10 @@ public class mainState extends Scene {
 	    	}
 	    }
 	    return false; 
-	}	
+	}
+
+
+
+	
 }
 

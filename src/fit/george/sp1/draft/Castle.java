@@ -1,8 +1,11 @@
 package fit.george.sp1.draft;
 
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.text.Text;
+import org.andengine.entity.text.TextOptions;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import org.andengine.util.HorizontalAlign;
 
 import android.util.Log;
 
@@ -15,7 +18,11 @@ import android.util.Log;
  */
 public class Castle extends Sprite {
 	
-	private static int health = 5;
+	private Text text;
+	private final static int TEXT_X = 675;
+	private final static int TEXT_Y = 250;
+	
+	private int health = 5;
 	public static Castle castle_instance;
 	
 	
@@ -42,6 +49,7 @@ public class Castle extends Sprite {
 		Creep_generator.controlCreeps_alive();
 		
 		health--;
+		text.setText(Integer.toString(health));
 		if( !isAlive() ) game_Scene.game_instance.onGameOver();
 		String str = "";
 		str += Integer.toString(health);
@@ -79,6 +87,11 @@ public class Castle extends Sprite {
 	{		
 		super(pX, pY, pTextureRegion, pVertexBufferObjectManager);
 		castle_instance = this;
+		
+		text = new Text(TEXT_X, TEXT_Y, MainActivity.instance.mFont, Integer.toString(health), 
+				new TextOptions(HorizontalAlign.CENTER), MainActivity.instance.getVertexBufferObjectManager());
+		
+		game_Scene.game_instance.attachChild(text);
 	}
 	
 }

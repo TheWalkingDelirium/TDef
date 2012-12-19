@@ -30,11 +30,11 @@ public class Creep_octopus extends SimpleCreep{
 	 */	
 	public Creep_octopus(float centerX, float centerY, float pWidth,
 			float pHeight, ITiledTextureRegion pPlayerTextureRegion,
-			VertexBufferObjectManager pVertexBufferObjectManager) {
+			VertexBufferObjectManager pVertexBufferObjectManager, int healthPoint, float duration) {
 		
 		super(centerX, centerY, pWidth, pHeight, pPlayerTextureRegion, pVertexBufferObjectManager);
-		this.setInitialHealthPoint(350);
-		
+		this.setInitialHealthPoint(healthPoint);
+		this.pDuration = duration;
 		this.setInitialPrice(40);
 		
 		this.animate(100);
@@ -42,12 +42,16 @@ public class Creep_octopus extends SimpleCreep{
 		final Path path = Matrix.getPath(0, 0);
 		
 		
-		this.registerEntityModifier(new LoopEntityModifier(new PathModifier(15, path, null, new IPathModifierListener() {
+		
+		this.registerEntityModifier(new LoopEntityModifier(new PathModifier(this.pDuration, path, null, new IPathModifierListener() {
+			
+			
+			
 			public void onPathStarted(final PathModifier pPathModifier, final IEntity pEntity) {
-
 			}
 
 			public void onPathWaypointStarted(final PathModifier pPathModifier, final IEntity pEntity, final int pWaypointIndex) {
+	
 				
 			}
 
@@ -56,13 +60,34 @@ public class Creep_octopus extends SimpleCreep{
 			}
 
 			
-			public void onPathFinished(final PathModifier pPathModifier, final IEntity pEntity) {				
+			public void onPathFinished(final PathModifier pPathModifier, final IEntity pEntity) {
 				detach();
 				Castle.castle_instance.Attacked();
 				}
 		})));
+				
+		this.hpAnimator.registerEntityModifier(new LoopEntityModifier(new PathModifier(this.pDuration, path, null, new IPathModifierListener() {
+			public void onPathStarted(final PathModifier pPathModifier, final IEntity pEntity) {
+
+			}
+
+			public void onPathWaypointStarted(final PathModifier pPathModifier, final IEntity pEntity, final int pWaypointIndex) {
+			}
+
 			
+			public void onPathWaypointFinished(final PathModifier pPathModifier, final IEntity pEntity, final int pWaypointIndex) {
+			}
+
+			
+			public void onPathFinished(final PathModifier pPathModifier, final IEntity pEntity) {
+				}
+		})));
+		
+		
+		
+		
 		game_Scene.game_instance.attachChild(this);
+		game_Scene.game_instance.attachChild(this.hpAnimator);
 		
 	}
 	

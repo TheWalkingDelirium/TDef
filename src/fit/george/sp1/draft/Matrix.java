@@ -5,6 +5,9 @@ import org.andengine.entity.modifier.LoopEntityModifier;
 import org.andengine.entity.modifier.PathModifier;
 import org.andengine.entity.modifier.PathModifier.IPathModifierListener;
 import org.andengine.entity.modifier.PathModifier.Path;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 
 import android.util.Log;
 
@@ -17,15 +20,15 @@ import android.util.Log;
 public class Matrix implements Constants {
 	
 	
-	private final static int MATRIX_W = 10;
-	private final static int MATRIX_H = 15;
-	// 1 поле - 40px na 40px;
+	public final static int MATRIX_W = 10;
+	public final static int MATRIX_H = 15;
+	// 1 пїЅпїЅпїЅпїЅ - 40px na 40px;
 	
 	
 	
 	
 	
-	private static int[][] matrix;
+	public static int[][] matrix;
 	
 	
 	/**
@@ -95,10 +98,10 @@ public class Matrix implements Constants {
 	 * 	object of <code>Path</code> class 
 	 */
 	public static final Path getPath(int x, int y) {
-		final  Path path = new Path(7).to(2*60 + x, 0 + y).to(2*60 + x, 6*60 + y).to(6*60 + x, 6*60 + y).
-				to(6*60 + x, 2*60 + y).to(8*60 + x, 2*60 + y).to(8*60 + x, 5*60 + y).to(11*60 + x, 5*60 + y);
-		return path;
-	}
+		  final  Path path = new Path(7).to(2*60 + x, 0 + y).to(2*60 + x, 5*60 + y).to(6*60 + x, 5*60 + y).
+		    to(6*60 + x, 2*60 + y).to(8*60 + x, 2*60 + y).to(8*60 + x, 5*60 + y).to(11*60 + x, 5*60 + y);
+		  return path;
+		 }
 	
 	
 	
@@ -124,45 +127,51 @@ public class Matrix implements Constants {
 	private void RoadInit()
 	{
 		
-		matrix[1][3] = NPC_GENERATOR; //исходная точка крипов
-				
-		
-		//строим дорогу
-		for(int i = 2; i < 8; i++)
-			matrix[i][3] = ROAD;
-		
-		for(int i = 3; i < 8; i++)
-			matrix[7][i] = ROAD;
-		
-		for(int i = 3; i < 8; i++)
-			matrix[i][7] = ROAD;
-		
-		for(int i = 7; i < 10; i++)
-			matrix[3][i] = ROAD;
-		
-		for(int i = 3; i < 7; i++)
-			matrix[i][9] = ROAD;
-		
-		for(int i = 9; i < 12; i++)
-			matrix[6][i] = ROAD;
-		
-		
-		for(int i = 1; i < 4; i++)
-			matrix[i][2] = LANDSCAPE_TREE_3;
-		
-		for(int i = 1; i < 4; i++)
-			matrix[i][4] = LANDSCAPE_TREE_1;
-		
-		for(int i = 5; i < 8; i++)
-			matrix[i][13] = LANDSCAPE_TREE_2;
-		
-		matrix[7][12] = LANDSCAPE_TREE_2;
-		matrix[5][12] = LANDSCAPE_TREE_2;
-		matrix[6][12] = CASTLE;
-		
-		matrix[1][13] = LANDSCAPE;
-		matrix[2][13] = LANDSCAPE;
-		
+		  matrix[1][3] = NPC_GENERATOR; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	    
+		  
+		  //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+		  for(int i = 2; i < 7; i++)
+		   matrix[i][3] = ROAD;
+		  
+		  for(int i = 3; i < 8; i++)
+		   matrix[6][i] = ROAD;
+		  
+		  for(int i = 3; i < 7; i++)
+		   matrix[i][7] = ROAD;
+		  
+		  for(int i = 7; i < 10; i++)
+		   matrix[3][i] = ROAD;
+		  
+		  for(int i = 3; i < 7; i++)
+		   matrix[i][9] = ROAD;
+		  
+		  for(int i = 9; i < 12; i++)
+		   matrix[6][i] = ROAD;
+		  
+		  
+		  for(int i = 1; i < 4; i++)
+		   matrix[i][2] = LANDSCAPE_TREE_3;
+		  
+		  for(int i = 1; i < 4; i++)
+		   matrix[i][4] = LANDSCAPE_TREE_1;
+		  
+		  for(int i = 5; i < 8; i++)
+		   matrix[i][13] = LANDSCAPE_TREE_2;
+		  
+		  matrix[7][12] = LANDSCAPE_TREE_2;
+		  matrix[5][12] = LANDSCAPE_TREE_2;
+		  matrix[6][12] = CASTLE;
+		  
+		  
+		  for(int i = 5; i < 14; i++)
+		   matrix[1][i] = LANDSCAPE;
+		  for(int i = 2; i < 5; i++)
+		   matrix[i][13] = LANDSCAPE;
+		  for(int i = 1; i < 14; i++)
+		   matrix[8][i] = LANDSCAPE;
+		  for(int i = 1; i < 8; i++)
+		   matrix[i][1] = LANDSCAPE;
 		
 	}
 	
@@ -268,6 +277,38 @@ public class Matrix implements Constants {
 		
 		return count;
 	}
+	
+	/*
+	public void readFromFile() {
+		
+		// try opening the myfilename.txt
+		  try {
+		    // open the file for reading
+		    InputStream instream  = openFileInput("myfilename.txt");
+		 
+		    // if file the available for reading
+		    if (instream) {
+		      // prepare the file for reading
+		      InputStreamReader inputreader = new InputStreamReader(instream);
+		      BufferedReader buffreader = new BufferedReader(inputreader);
+		                 
+		      String line;
+		 
+		      // read every line of the file into the line-variable, on line at the time
+		      while (( line = buffreader.readLine())) {
+		        // do something with the settings from the file
+		      }
+		 
+		    }
+		     
+		    // close the file again       
+		    instream.close();
+		  } catch (java.io.FileNotFoundException e) {
+		    // do something if the myfilename.txt does not exits
+		  }
+	}
+	*/
+	
 	
 
 }

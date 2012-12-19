@@ -20,7 +20,7 @@ public class settings_Scene extends CameraScene {
 				if (pSceneTouchEvent.isActionDown()) {
 					//yoursound.setvolume(0.0f);
 					if(text_sound==false){ 
-						this.setColor(211/255f, 215/255f, 207/255f);
+						this.setColor(144/255f, 136/255f, 125/255f);
 						text_sound = true;
 					}
 					else {
@@ -38,7 +38,7 @@ public class settings_Scene extends CameraScene {
 					float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown()) {
 					if(text_grid==false){ 
-						this.setColor(211/255f, 215/255f, 207/255f);
+						this.setColor(144/255f, 136/255f, 125/255f);
 						game_Scene.game_instance.grid_switch(false);
 						text_grid = true;
 						

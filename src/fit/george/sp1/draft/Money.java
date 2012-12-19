@@ -16,7 +16,7 @@ public class Money {
 	
 	private Sprite faceBoss, faceCool, facePoker, faceTroll, faceWhy;
 	private int money;
-	private Text text, sight;
+	private Text text;
 	private final static int TEXT_X = 690;
 	private final static int TEXT_Y = 20;
 	public static Money instance;
@@ -30,6 +30,7 @@ public class Money {
 	public Money(int money) {
 		instance = this;
 		this.money = money;
+		
 		
 		text = new Text(TEXT_X, TEXT_Y, MainActivity.instance.mFont, "$" + "10000", 
 				new TextOptions(HorizontalAlign.CENTER), MainActivity.instance.getVertexBufferObjectManager());
